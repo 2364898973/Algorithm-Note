@@ -5,9 +5,10 @@ s:当前已确定最短距离的点集合。
 2. for i:1~n  
   2.1 t<-不在s中的，距离最近的点。 O(n^2)   
   2.2 s<-t。  O(n)  
-  2.3 用t更新其他点的距离。  O(m)  
-   
-时间复杂是O(n^2+m),n表示点数,m表示边数。
+  2.3 用t更新其他点的距离。  O(m)**相当于遍历所有边**  
+
+**用邻接矩阵存储图**  
+**时间复杂是O(n^2+m),n表示点数,m表示边数。**  
 ```
 int g[N][N];  // 存储每条边
 int dist[N];  // 存储1号点到每个点的最短距离
@@ -38,7 +39,19 @@ int dijkstra()
 }
 ```
 #### 堆优化版dijkstra
-  时间复杂度O(mlogn)，n表示点数，m表示边数。
+##### 算法步骤：
+s:当前已确定最短距离的点集合。  
+1. dist[1]=0,dist[i]=0x3f3f3f3f
+2. for i:1~n  
+  2.1 t<-不在s中的，距离最近的点。 O(n^2)->O(n)**利用堆进行优化，找最近点O(1)**   
+  2.2 s<-t。  O(n)  
+  2.3 用t更新其他点的距离。  O(m)**相当于遍历所有边**->O(mlogn)**堆修改O(logn)**  
+
+**用邻接表存储图**  
+**时间复杂度O(mlogn)，n表示点数，m表示边数。**  
+##### 堆
+1. 手写堆**支持修改元素，堆里一直有n个数**O(mlogn)  
+2. 优先队列(priority_queue)**不支持修改元素，堆里可能有m个数(m>n):实现方式为冗余，每次修改向堆插入一个元素**O(mlogm)->由于m<=n^2,O(mlogm)=O(mlogn)
 ```
 typedef pair<int, int> PII;
 
@@ -62,7 +75,7 @@ int dijkstra()
 
         int ver = t.second, distance = t.first;
 
-        if (st[ver]) continue;
+        if (st[ver]) continue;   //如果是冗余点，则不处理
         st[ver] = true;
 
         for (int i = h[ver]; i != -1; i = ne[i])
